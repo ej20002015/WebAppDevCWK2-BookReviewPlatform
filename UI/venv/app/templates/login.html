@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+{% block links %}
+<link rel="stylesheet" href="{{url_for('static', filename='login.css')}}">
+{% endblock %}
+{% block content %}
+  <form id="loginForm" action="" method="POST">
+    <h3>Enter your login details below</h3>
+    <!-- prevent csrf attacks -->
+    {{ form.hidden_tag() }}
+    <div class="form-group">
+      {% if validationError %}<p class="error">{{validationError}}</p>{% endif %}
+      <label for="username">Username</label>
+      {{form.username(class='form-control')}}
+      {% for error in form.username.errors %}
+        <p class="error">{{ error }}</p>
+      {% endfor %}
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      {{form.password(class='form-control')}}
+      {% for error in form.password.errors %}
+        <p class="error">{{ error }}</p>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
+    <p id="registerLink">Don't have an account? <a href="{{url_for('register')}}">Sign up here</a></p>
+  </form>
+{% endblock %}

@@ -1,0 +1,44 @@
+#brand
+{
+  margin-left: 20px;
+  color: #ADEFD1FF !important;
+}
+
+.nav
+{
+  border-bottom: 3px solid #ADEFD1FF;
+  background-color: #00203FFF !important;
+}
+
+.nav-link
+{
+  color: #ADEFD1FF !important;
+}
+
+.error
+{
+  color: red;
+}
+
+nav
+{
+  margin-bottom: 50px !important;
+}
+
+.btn-primary
+{
+  background-color: #ADEFD1FF;
+  color: #00203FFF;
+  border: none;
+}
+
+.btn-primary:hover
+{
+  background-color: #00203FFF;
+  color: #ADEFD1FF;
+}
+
+.form-control
+{
+  border-color: #00203FFF;
+}
