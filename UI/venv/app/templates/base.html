@@ -16,6 +16,7 @@
       <ul class="nav navbar-nav">
         <!-- each li has a block within the class attribute to allow pages that extend the base to specify which page is active, highlighting the appropriate link -->
         <li class="nav-item {% block indexActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
+        <li class="nav-item {% block newBookActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('newBook') }}">Add Read Book</a></li>
       </ul>
     </nav>
     <div id="content" class="container">

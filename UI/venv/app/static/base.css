@@ -4,15 +4,23 @@
   color: #ADEFD1FF !important;
 }
 
-.nav
-{
-  border-bottom: 3px solid #ADEFD1FF;
-  background-color: #00203FFF !important;
-}
-
 .nav-link
 {
   color: #ADEFD1FF !important;
+  border: none;
+}
+
+.nav-link:hover
+{
+  color: rgb(212, 245, 230) !important;
+  border: none;
+}
+
+.active
+{
+  color: rgb(212, 245, 230) !important;
+  border-bottom: 2px solid #ADEFD1FF;
+  padding-bottom: -2px;
 }
 
 .error
@@ -23,6 +31,8 @@
 nav
 {
   margin-bottom: 50px !important;
+  border-bottom: 3px solid #ADEFD1FF;
+  background-color: #00203FFF !important;
 }
 
 .btn-primary
