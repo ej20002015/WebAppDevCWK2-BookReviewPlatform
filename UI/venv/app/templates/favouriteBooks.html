@@ -41,16 +41,27 @@
             </div>
             <div class="modal-body">
               <h6 class="card-subtitle mb-2 text-muted">Author:</h6>
-              <p class="card-text" id="author">{{book.author}}</p>
+              <p class="card-text">{{book.author}}</p>
               <h6 class="card-subtitle mb-2 text-muted">ISBN:</h6>
-              <p class="card-text" id="ISBN">{{book.ISBN}}</p>
+              <p class="card-text">{{book.ISBN}}</p>
               <h6 class="card-subtitle mb-2 text-muted">Description:</h6>
-              <p class="card-text" id="description">{%if book.description %}{{book.description}}{% else %}Not available{% endif %}</p>
+              <p class="card-text">{%if book.description %}{{book.description}}{% else %}Not available{% endif %}</p>
               <h6 class="card-subtitle mb-2 text-muted">Published Date:</h6>
-              <p class="card-text" id="publishDate">{%if book.publishedDate %}{{book.publishedDate}}{% else %}Not available{% endif %}</p>
+              <p class="card-text">{%if book.publishedDate %}{{book.publishedDate}}{% else %}Not available{% endif %}</p>
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title">Your thoughts:</h5>
+                  {% if userBookDetails[book.id].thoughts %}
+                    <p class="card-text" id="thoughts{{userBookDetails[book.id].id}}">{{userBookDetails[book.id].thoughts}}</p>
+                  {% else %}
+                    <p class="card-text" id="thoughts{{userBookDetails[book.id].id}}">No thoughts - add some now</p>
+                  {% endif %}
+                </div>
+                <button value="{{userBookDetails[book.id].id}}" class="btn btn-primary thoughtsButton">{% if userBookDetails[book.id].thoughts %}Change your thoughts{% else %}Add thoughts{% endif %}</button>
+              </div>
             </div>
             <div class="modal-footer">
-                <button type="button" data-favourite="1" value="{{userBookDetails[book.id].id}}" class="btn btn-warning favouriteButton">Remove from favourites</button>
+                <button data-favourite="1" value="{{userBookDetails[book.id].id}}" class="btn btn-warning favouriteButton">Remove from favourites</button>
             </div>
           </div>
         </div>
