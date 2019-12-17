@@ -99,27 +99,28 @@ function computeList(returnedBooks, ISBNOrTitle, searchResults)
             success: function(response) {
               bookDetails = response["ISBN:" + ISBNOrTitle].details;
               dataToCreateNewBook.description = bookDetails.description;
-            }
-          });
-
-          //add new book to own database
-          $.ajax({
-            url: endpoint + "Books",
-            type: "POST",
-            data: JSON.stringify(dataToCreateNewBook),
-            dataType: "json",
-            contentType: "application/json; charset=utf-8",
-            headers: {
-              "Authorization": "Basic " + btoa(username + ":" + password)
             },
-            success: function(response) {
-              book = response;
-              outputBookCardToSearchResults(book, searchResults, 0);
-            },
-            error: function(response) {
-              console.log(response.responseJSON.error);
-              searchResults.text("When attempting to add newly found book to database - ERROR: " + response.responseJSON.error);
-              searchResults.addClass("error");
+            complete: function(response) {
+              //add new book to own database
+              $.ajax({
+                url: endpoint + "Books",
+                type: "POST",
+                data: JSON.stringify(dataToCreateNewBook),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                  "Authorization": "Basic " + btoa(username + ":" + password)
+                },
+                success: function(response) {
+                  book = response;
+                  outputBookCardToSearchResults(book, searchResults, 0);
+                },
+                error: function(response) {
+                  console.log(response.responseJSON.error);
+                  searchResults.text("When attempting to add newly found book to database - ERROR: " + response.responseJSON.error);
+                  searchResults.addClass("error");
+                }
+              });
             }
           });
         }
@@ -139,6 +140,7 @@ $(document).ready(function() {
   var searchField = $("#ISBNField");
   var searchResults = $("#accordion");
   searchButton.on("click", function() {
+    searchResults.removeClass("error");
     searchResults.html("");
     var returnedBooks = [];
     ISBNOrTitle = searchField.val();
@@ -163,28 +165,29 @@ $(document).ready(function() {
         console.log(response.responseJSON.error);
         searchResults.text("ERROR: " + response.responseJSON.error);
         searchResults.addClass("error");
-      }
-    });
-
-    //search by title
-    $.ajax({
-      //specify the endpoint of the request
-      url: endpoint + "Books?title=" + ISBNOrTitle,
-      type: "GET",
-      dataType: "json",
-      headers: {
-        "Authorization": "Basic " + btoa(username + ":" + password)
-      },
-      success: function(response) {
-        returnedBooks.push.apply(returnedBooks, response);
-      },
-      error: function(response) {
-        console.log(response.responseJSON.error);
-        searchResults.text("ERROR: " + response.responseJSON.error);
-        searchResults.addClass("error");
       },
       complete: function(response) {
-        computeList(returnedBooks, ISBNOrTitle, searchResults);
+        //search by title
+        $.ajax({
+          //specify the endpoint of the request
+          url: endpoint + "Books?title=" + ISBNOrTitle,
+          type: "GET",
+          dataType: "json",
+          headers: {
+            "Authorization": "Basic " + btoa(username + ":" + password)
+          },
+          success: function(response) {
+            returnedBooks.push.apply(returnedBooks, response);
+          },
+          error: function(response) {
+            console.log(response.responseJSON.error);
+            searchResults.text("ERROR: " + response.responseJSON.error);
+            searchResults.addClass("error");
+          },
+          complete: function(response) {
+            computeList(returnedBooks, ISBNOrTitle, searchResults);
+          }
+        });
       }
     });
   });
@@ -197,7 +200,7 @@ $(document).ready(function() {
     $.ajax({
       url: endpoint + "UserReadBooks",
       type: "POST",
-      data: JSON.stringify({"userId": userId, "bookId": bookId}),
+      data: JSON.stringify({"userId": userId, "bookId": bookId, "favourite": false}),
       contentType: "application/json; charset=utf-8",
       headers: {
         "Authorization": "Basic " + btoa(username + ":" + password)

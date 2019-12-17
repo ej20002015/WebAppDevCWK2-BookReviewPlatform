@@ -119,7 +119,7 @@ class BooksResource(Resource):
     if request.get_json():
       for book in models.Book.query.filter(models.Book.id.in_(request.get_json())).all():
         booksList.append(book.toJSON())
-        return booksList, 200
+      return booksList, 200
 
     #if there are not request arguments or those arguments are not for filtering (e.g. a callback argument)
     if not request.args or not checkFilterAttributes(request.args, "ISBN", "title", "author"):
@@ -177,6 +177,24 @@ class UserReadBookResource(Resource):
     else:
       return {"error": "No userReadBook has the specified ID"}, 404
 
+  @auth.login_required
+  def put(self, userReadBookId):
+    userReadBookToChange = models.UserReadBook.query.filter_by(id=userReadBookId).first()
+    if userReadBookToChange:
+      #only allowed to change the favourite and thoughts attributes so only check for them
+      data = request.get_json()
+      if "favourite" in data:
+        userReadBookToChange.favourite = data["favourite"]
+      if "thoughts" in data:
+        userReadBookToChange.thoughts = data["thoughts"]
+      
+      #commmit changes
+      db.session.commit()
+      return userReadBookToChange.toJSON(), 204
+
+    else:
+      return {"error": "No userReadBook has the specified ID"}, 404
+
 class UserReadBooksResource(Resource):
 
   @auth.login_required
@@ -197,17 +215,20 @@ class UserReadBooksResource(Resource):
     
     return userReadBooksList, 200
 
+  @auth.login_required
   def post(self):
     data = request.get_json()
-    if checkPostData(data, "userId", "bookId"):
-      if checkEssentialPostData(data, "userId", "bookId"):
+    if checkPostData(data, "userId", "bookId", "favourite", "thoughts"):
+      if checkEssentialPostData(data, "userId", "bookId", "favourite"):
         potentialUserReadBooks = models.UserReadBook.query.filter_by(userId=data["userId"]).all()
         for potentialUserReadBook in potentialUserReadBooks:
           if potentialUserReadBook.bookId == data["bookId"]:
             return {"error": "User has already said they have read this book"}, 409
         
         newUserReadBookId = uuid.uuid1().hex
-        newUserReadBook = models.UserReadBook(id=newUserReadBookId, userId=data["userId"], bookId=data["bookId"])
+        newUserReadBook = models.UserReadBook(id=newUserReadBookId, userId=data["userId"], bookId=data["bookId"], favourite=data["favourite"])
+        if "thoughts" in data:
+          newUserReadBook.thoughts = data["thoughts"]
         
         db.session.add(newUserReadBook)
         db.session.commit()

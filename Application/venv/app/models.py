@@ -33,8 +33,10 @@ class UserReadBook(db.Model):
   id = db.Column(db.String(36), primary_key=True)
   userId = db.Column(db.String(36), db.ForeignKey("user.id"))
   bookId = db.Column(db.String(36), db.ForeignKey("book.id"))
+  favourite = db.Column(db.Boolean, nullable=False)
+  thoughts = db.Column(db.Text)
 
   def toJSON(self):
-    return {"id": self.id, "userId": self.userId, "bookId": self.userId}
+    return {"id": self.id, "userId": self.userId, "bookId": self.bookId, "favourite": self.favourite, "thoughts": self.thoughts}
 
 
