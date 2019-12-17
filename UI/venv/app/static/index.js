@@ -12,7 +12,7 @@ function setAjaxDetails(endpointParam, usernameParam, passwordParam, userIdParam
 }
 
 $(document).ready(function() {
-  //when button to add book to library is pressed
+  //when favourite button is clicked
   $("#books").on("click", ".favouriteButton",function() {
     var buttonClicked = $(this);
     if (buttonClicked.data("favourite") == "0")

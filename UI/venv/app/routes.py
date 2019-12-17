@@ -48,6 +48,46 @@ def index():
 
   return render_template("index.html", error=None, booksList=booksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
 
+@app.route('/favouriteBooks')
+def favouriteBooks():
+  if not checkLoggedIn():
+    return redirect(url_for("login"))
+
+  favouriteBooksList = []
+
+  userReadBooksResponse = requests.get(applicationLayerDomain + "UserReadBooks?userId=" + session["user"]["id"] + "&favourite=1", auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
+  if userReadBooksResponse:
+    userReadBooksJSON = userReadBooksResponse.json()
+    if not userReadBooksJSON:
+      #if user has read no books
+      return render_template("favouriteBooks.html", error=None, booksList=favouriteBooksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
+    else:
+      #if user has read books
+
+      #get details of read books
+      listOfBookIds = []
+      for userReadBook in userReadBooksJSON:
+        listOfBookIds.append(userReadBook["bookId"])
+      booksResponse = requests.get(applicationLayerDomain + "Books", json=listOfBookIds, auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
+      favouriteBooksList = booksResponse.json()
+
+      booksListLength = len(favouriteBooksList)
+      numberOfDummyCards = 0
+      while booksListLength % 3 != 0:
+        numberOfDummyCards += 1
+        booksListLength += 1
+
+      userBookDetails = {}
+      for userReadBook in userReadBooksJSON:
+        userBookDetails[userReadBook["bookId"]] = {"id": userReadBook["id"], "favourite": userReadBook["favourite"], "thoughts": userReadBook["thoughts"]}
+
+      return render_template("favouriteBooks.html", error=None, booksList=favouriteBooksList, numberOfDummyCards=numberOfDummyCards, userBookDetails=userBookDetails, endpoint=applicationLayerDomain, user=session["user"])
+  else:
+    #error has occurred
+    return render_template("favouriteBooks.html", error=userReadBooksResponse.json()["error"], booksList=favouriteBooksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
+
+  return render_template("favouriteBooks.html", error=None, booksList=favouriteBooksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
   if checkLoggedIn():

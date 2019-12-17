@@ -200,18 +200,27 @@ class UserReadBooksResource(Resource):
   @auth.login_required
   def get(self):
     userReadBooksList = []
-    if not request.args or not checkFilterAttributes(request.args, "userId", "bookId"):
+    if not request.args or not checkFilterAttributes(request.args, "userId", "bookId", "favourite"):
       for userReadBook in models.UserReadBook.query.all():
         #get all userReadBooks
         userReadBooksList.append(userReadBook.toJSON())
     
     else:
       if "userId" in request.args:
-        for userReadBook in models.UserReadBook.query.filter_by(userId=request.args["userId"]).all():
-          userReadBooksList.append(userReadBook.toJSON())
+        if "favourite" in request.args:
+          for userReadBook in models.UserReadBook.query.filter_by(userId=request.args["userId"]).filter_by(favourite=request.args["favourite"]).all():
+            userReadBooksList.append(userReadBook.toJSON())
+        else:
+          for userReadBook in models.UserReadBook.query.filter_by(userId=request.args["userId"]).all():
+            userReadBooksList.append(userReadBook.toJSON())
+
       if "bookId" in request.args:
-        for userReadBook in models.UserReadBook.query.filter_by(bookId=request.args["bookId"]).all():
-          userReadBooksList.append(userReadBook.toJSON())
+        if "favourite" in request.args:
+          for userReadBook in models.UserReadBook.query.filter_by(bookId=request.args["bookId"]).filter_by(favourite=request.args["favourite"]).all():
+            userReadBooksList.append(userReadBook.toJSON())
+        else:
+          for userReadBook in models.UserReadBook.query.filter_by(bookId=request.args["bookId"]).all():
+            userReadBooksList.append(userReadBook.toJSON())
     
     return userReadBooksList, 200
 

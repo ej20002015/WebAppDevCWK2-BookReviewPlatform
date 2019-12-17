@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}Favourite Books{% endblock %}
+{% block favouriteBooksActive %}active{% endblock %}
+{% block links %}
+<link rel="stylesheet" href="{{url_for('static', filename='index.css')}}">
+<script type="text/javascript" src="{{url_for('static', filename='favouriteBooks.js')}}"></script>
+<script>
+  setAjaxDetails("{{endpoint}}", "{{user.username}}", "{{user.password}}", "{{user.id}}");
+</script>
+{% endblock %}
+{% block content %}
+<h2>Your favourite read books:</h2>
+{% if error %}
+  <p class=error>ERROR: {{error}}</p>
+{% else %}
+  {% if not booksList %}
+  <p>You have not added any read books to your favourites</p>
+  {% else %}
+  <div id="books">
+    <!-- display a card for each book and a modal giving more details (and user options for adding book to favourites and rating it) -->
+    {% for book in booksList %}
+      {% if (loop.index - 1) % 3 == 0 %}
+        <div class="card-deck">
+      {% endif %}
+      <div class="card">
+        <img class="card-img-top" src="{{book.coverImageURI}}" alt="Image of book cover">
+        <div class="card-body">
+          <h5 class="card-title">{{book.title}}</h5>
+        </div>
+        <button value="{{book.id}}" class="btn btn-primary" data-toggle="modal" data-target="#modal{{book.id}}">More details</button>
+      </div>
+      <!-- Modal for card to show more details and use options-->
+      <div class="modal fade" id="modal{{book.id}}" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">{{book.title}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <h6 class="card-subtitle mb-2 text-muted">Author:</h6>
+              <p class="card-text" id="author">{{book.author}}</p>
+              <h6 class="card-subtitle mb-2 text-muted">ISBN:</h6>
+              <p class="card-text" id="ISBN">{{book.ISBN}}</p>
+              <h6 class="card-subtitle mb-2 text-muted">Description:</h6>
+              <p class="card-text" id="description">{%if book.description %}{{book.description}}{% else %}Not available{% endif %}</p>
+              <h6 class="card-subtitle mb-2 text-muted">Published Date:</h6>
+              <p class="card-text" id="publishDate">{%if book.publishedDate %}{{book.publishedDate}}{% else %}Not available{% endif %}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-favourite="1" value="{{userBookDetails[book.id].id}}" class="btn btn-warning favouriteButton">Remove from favourites</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      {% if (loop.index - 3) % 3 == 0 and (loop.index - 3) > -1 %}
+        </div>
+      {% endif %}
+    {% endfor %}
+    <!-- Fill in the rest of the space in a card-deck with dummy cards that are not visible to prevent card stretching -->
+    {% if numberOfDummyCards != 0 %}
+      {% for i in range(numberOfDummyCards) %}
+        <div class="card dummyCard">
+          <img class="card-img-top" src="#" alt="Image of book cover dummy">
+          <div class="card-body">
+            <h5 class="card-title">Dummy card</h5>
+          </div>
+          <button class="btn btn-primary">More details</button>
+        </div>
+      {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endif %}
+{% endblock %}

@@ -12,3 +12,8 @@
 {
   visibility: hidden;
 }
+
+#favouritesOnlyLabel
+{
+  margin-bottom: 20px;
+}
