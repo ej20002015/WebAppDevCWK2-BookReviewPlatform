@@ -13,7 +13,35 @@ def index():
   if not checkLoggedIn():
     return redirect(url_for("login"))
 
-  return render_template("index.html")
+  booksList = []
+
+  userReadBooksResponse = requests.get(applicationLayerDomain + "UserReadBooks?userId=" + session["user"]["id"], auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
+  if userReadBooksResponse:
+    userReadBooksJSON = userReadBooksResponse.json()
+    if not userReadBooksJSON:
+      #if user has read no books
+      print("read no books")
+      return render_template("index.html", error=None, booksList=booksList, numberOfDummyCards=None)
+    else:
+      #if user has read books
+
+      #get details of read books
+      listOfBookIds = []
+      for userReadBook in userReadBooksJSON:
+        listOfBookIds.append(userReadBook["bookId"])
+      booksResponse = requests.get(applicationLayerDomain + "Books", json=listOfBookIds, auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
+      booksList = booksResponse.json()
+      booksListLength = len(booksList)
+      numberOfDummyCards = 0
+      while booksListLength % 3 != 0:
+        numberOfDummyCards += 1
+        booksListLength += 1
+      return render_template("index.html", error=None, booksList=booksList, numberOfDummyCards=numberOfDummyCards)
+  else:
+    #error has occurred
+    return render_template("index.html", error=userReadBooksResponse.json()["error"], booksList=booksList, numberOfDummyCards=None)
+
+  return render_template("index.html", error=None, booksList=booksList, numberOfDummyCards=None)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -56,7 +84,7 @@ def register():
 @app.route("/newBook", methods=["GET"])
 def newBook():
   if not checkLoggedIn():
-    return redirect(url_for("login"))
+    return redirect(url_for("login")) 
 
   return render_template("newBook.html", endpoint=applicationLayerDomain, user=session["user"])
 

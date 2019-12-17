@@ -115,6 +115,12 @@ class BooksResource(Resource):
   @auth.login_required
   def get(self):
     booksList = []
+    #if there is json data sent along with the get then this is a list of specific book IDs so send back those books
+    if request.get_json():
+      for book in models.Book.query.filter(models.Book.id.in_(request.get_json())).all():
+        booksList.append(book.toJSON())
+        return booksList, 200
+
     #if there are not request arguments or those arguments are not for filtering (e.g. a callback argument)
     if not request.args or not checkFilterAttributes(request.args, "ISBN", "title", "author"):
       for book in models.Book.query.all():

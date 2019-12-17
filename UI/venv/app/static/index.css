@@ -1,0 +1,14 @@
+.card-deck
+{
+  margin-bottom: 40px;
+}
+
+.card img
+{
+  height: 520px;
+}
+
+.dummyCard
+{
+  visibility: hidden;
+}

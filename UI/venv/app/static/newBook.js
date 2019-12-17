@@ -126,7 +126,7 @@ function computeList(returnedBooks, ISBNOrTitle, searchResults)
         else
         {
           //no books exist with that ISBN
-          searchResults.text("No books exist with that ISBN");
+          searchResults.text("No books found - try inputting the books ISBN instead of its title");
           searchResults.addClass("error");
         }
       } 
