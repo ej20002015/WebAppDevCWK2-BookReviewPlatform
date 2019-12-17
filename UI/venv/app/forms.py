@@ -12,3 +12,7 @@ class RegisterForm(FlaskForm):
   username = StringField("username", validators=[DataRequired(), Length(max=100)])
   password = PasswordField("password", validators=[DataRequired(), Length(max=200)])
   reEnterPassword = PasswordField("reEnterPassword", validators=[DataRequired(), Length(max=200), equal_to("password", "Passwords must match")])
+
+class changePasswordForm(FlaskForm):
+  newPassword = PasswordField("newPassword", validators=[DataRequired(), Length(max=200)])
+  reEnterNewPassword = PasswordField("reEnterNewPassword", validators=[DataRequired(), Length(max=200), equal_to("newPassword", "New passwords must match")])

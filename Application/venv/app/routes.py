@@ -57,6 +57,7 @@ class UserResource(Resource):
   @auth.login_required
   def put(self, userId):
     data = request.get_json()
+    print(data)
     if checkPostData(data, "password"):
       user = models.User.query.filter_by(id=userId).first()
       if user:
@@ -72,7 +73,7 @@ class UserResource(Resource):
         return {"error": "No user has the specified ID"}, 404
 
     else:
-      return {"error": "JSON does not include the required data to make a new user"}, 400
+      return {"error": "JSON does not include the required data to change a user password"}, 400
 
 class UsersResource(Resource):
 

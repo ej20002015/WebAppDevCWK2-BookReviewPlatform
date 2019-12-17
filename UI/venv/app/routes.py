@@ -8,7 +8,7 @@ applicationLayerDomain = "http://localhost:5001/"
 def checkLoggedIn():
   return "user" in session
 
-@app.route('/')
+@app.route("/")
 def index():
   if not checkLoggedIn():
     return redirect(url_for("login"))
@@ -48,7 +48,7 @@ def index():
 
   return render_template("index.html", error=None, booksList=booksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
 
-@app.route('/favouriteBooks')
+@app.route("/favouriteBooks")
 def favouriteBooks():
   if not checkLoggedIn():
     return redirect(url_for("login"))
@@ -87,6 +87,25 @@ def favouriteBooks():
     return render_template("favouriteBooks.html", error=userReadBooksResponse.json()["error"], booksList=favouriteBooksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
 
   return render_template("favouriteBooks.html", error=None, booksList=favouriteBooksList, numberOfDummyCards=None, userBookDetails=None, endpoint=applicationLayerDomain, user=session["user"])
+
+@app.route("/changePassword", methods=["GET", "POST"])
+def changePassword():
+  if not checkLoggedIn():
+    return redirect(url_for("login"))
+
+  form = forms.changePasswordForm()
+
+  if form.validate_on_submit():
+    newPassword = form.newPassword.data
+    response = requests.put(applicationLayerDomain + "Users/" + session["user"]["id"], json={"password": newPassword}, auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
+    if response:
+      #do alert
+      session["user"] = {"id": session["user"]["id"], "username": session["user"]["username"], "password": newPassword}
+      return redirect(url_for("index"))
+    else:
+      return render_template("changePassword.html", form=form, validationError=response.json()["error"])
+
+  return render_template("changePassword.html", form=form, validationError=None)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():

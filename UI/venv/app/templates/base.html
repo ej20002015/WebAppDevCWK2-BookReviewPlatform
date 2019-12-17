@@ -18,6 +18,7 @@
         <li class="nav-item {% block indexActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('index') }}">Home</a></li>
         <li class="nav-item {% block newBookActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('newBook') }}">Add Read Book</a></li>
         <li class="nav-item {% block favouriteBooksActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('favouriteBooks') }}">Favourite Books</a></li>
+        <li class="nav-item {% block changePasswordActive %}{% endblock %}"><a class="nav-link" href="{{ url_for('changePassword') }}">Change Password</a></li>
       </ul>
     </nav>
     <div id="content" class="container">
