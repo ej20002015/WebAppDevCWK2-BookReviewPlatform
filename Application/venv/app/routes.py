@@ -5,8 +5,10 @@ import json
 from flask_httpauth import HTTPBasicAuth
 from flask_restful import Resource, Api
 from passlib.hash import bcrypt
+from flask_cors import CORS
 
 api = Api(app)
+CORS(app)
 auth = HTTPBasicAuth()
 
 @auth.verify_password
@@ -113,19 +115,13 @@ class BooksResource(Resource):
   @auth.login_required
   def get(self):
     booksList = []
-    if not request.args:
+    #if there are not request arguments or those arguments are not for filtering (e.g. a callback argument)
+    if not request.args or not checkFilterAttributes(request.args, "ISBN", "title", "author"):
       for book in models.Book.query.all():
         #get all books
         booksList.append(book.toJSON())
     
     else:
-      #filter books by attribute
-      if not checkFilterAttributes(request.args, "ISBN", "title", "author"):
-        return {"error": "Filter attributes are not valid"}, 400
-      
-      if len(request.args) > 1:
-        return {"error": "System only allows filtering by one attribute for the time being"}, 501
-      
       if "ISBN" in request.args:
         filterText = "%{}%".format(request.args["ISBN"])
         for book in models.Book.query.filter(models.Book.ISBN.like(filterText)).all():
@@ -165,6 +161,56 @@ class BooksResource(Resource):
     else:
       return {"error": "JSON does not include the required data to create a book"}, 400    
 
+class UserReadBookResource(Resource):
+
+  @auth.login_required
+  def get(self, userReadBookId):
+    userReadBook = models.UserReadBook.query.filter_by(id=userReadBookId).first()
+    if userReadBook:
+      return userReadBook.toJSON(), 200
+    else:
+      return {"error": "No userReadBook has the specified ID"}, 404
+
+class UserReadBooksResource(Resource):
+
+  @auth.login_required
+  def get(self):
+    userReadBooksList = []
+    if not request.args or not checkFilterAttributes(request.args, "userId", "bookId"):
+      for userReadBook in models.UserReadBook.query.all():
+        #get all userReadBooks
+        userReadBooksList.append(userReadBook.toJSON())
+    
+    else:
+      if "userId" in request.args:
+        for userReadBook in models.UserReadBook.query.filter_by(userId=request.args["userId"]).all():
+          userReadBooksList.append(userReadBook.toJSON())
+      if "bookId" in request.args:
+        for userReadBook in models.UserReadBook.query.filter_by(bookId=request.args["bookId"]).all():
+          userReadBooksList.append(userReadBook.toJSON())
+    
+    return userReadBooksList, 200
+
+  def post(self):
+    data = request.get_json()
+    if checkPostData(data, "userId", "bookId"):
+      if checkEssentialPostData(data, "userId", "bookId"):
+        potentialUserReadBooks = models.UserReadBook.query.filter_by(userId=data["userId"]).all()
+        for potentialUserReadBook in potentialUserReadBooks:
+          if potentialUserReadBook.bookId == data["bookId"]:
+            return {"error": "User has already said they have read this book"}, 409
+        
+        newUserReadBookId = uuid.uuid1().hex
+        newUserReadBook = models.UserReadBook(id=newUserReadBookId, userId=data["userId"], bookId=data["bookId"])
+        
+        db.session.add(newUserReadBook)
+        db.session.commit()
+        return newUserReadBook.toJSON(), 201
+
+    else:
+      return {"error": "JSON does not include the required data to create a UserReadBook resource"}, 400
+
+
 class SessionsResource(Resource):
 
   def post(self):
@@ -191,4 +237,6 @@ api.add_resource(UserResource, "/Users/<string:userId>")
 api.add_resource(UsersResource, "/Users")
 api.add_resource(BookResource, "/Books/<string:bookId>")
 api.add_resource(BooksResource, "/Books")
+api.add_resource(UserReadBookResource, "/UserReadBooks/<string:userReadBookId>")
+api.add_resource(UserReadBooksResource, "/UserReadBooks")
 api.add_resource(SessionsResource, "/Sessions")

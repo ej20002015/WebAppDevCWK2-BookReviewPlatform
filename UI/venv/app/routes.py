@@ -58,7 +58,7 @@ def newBook():
   if not checkLoggedIn():
     return redirect(url_for("login"))
 
-  return render_template("newBook.html")
+  return render_template("newBook.html", endpoint=applicationLayerDomain, user=session["user"])
 
 @app.route("/test")
 def test():

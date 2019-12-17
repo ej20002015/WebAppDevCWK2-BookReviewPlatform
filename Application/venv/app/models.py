@@ -8,6 +8,8 @@ class User(db.Model):
   #password will be a hashed and salted cypher text generated using the bcrypt algorithm
   password = db.Column(db.String(60), nullable=False)
 
+  books = db.relationship("Book", secondary="user_read_book")
+
   def toJSON(self):
     return {"id": self.id, "username": self.username, "password": self.password}
 
@@ -21,5 +23,18 @@ class Book(db.Model):
   description = db.Column(db.Text)
   coverImageURI = db.Column(db.Text)
 
+  users = db.relationship("User", secondary="user_read_book")
+
   def toJSON(self):
     return {"id": self.id, "ISBN": self.ISBN, "title": self.title, "author": self.author, "publishedDate": self.publishedDate, "description": self.description, "coverImageURI": self.coverImageURI}
+
+class UserReadBook(db.Model):
+  #id will be a 128 bit unique number generated using UUID
+  id = db.Column(db.String(36), primary_key=True)
+  userId = db.Column(db.String(36), db.ForeignKey("user.id"))
+  bookId = db.Column(db.String(36), db.ForeignKey("book.id"))
+
+  def toJSON(self):
+    return {"id": self.id, "userId": self.userId, "bookId": self.userId}
+
+

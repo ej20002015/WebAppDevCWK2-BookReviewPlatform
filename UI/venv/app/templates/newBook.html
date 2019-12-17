@@ -1,3 +1,25 @@
 {% extends "base.html" %}
 {% block title %}New Book{% endblock %}
 {% block newBookActive %}active{% endblock %}
+{% block links %}
+<link rel="stylesheet" href="{{url_for('static', filename='newBook.css')}}">
+<script type="text/javascript" src="{{url_for('static', filename='newBook.js')}}"></script>
+<script>
+  setAjaxDetails("{{endpoint}}", "{{user.username}}", "{{user.password}}", "{{url_for('static', filename='noImageAvailable.jpg')}}", "{{user.id}}");
+</script>
+{% endblock %}
+{% block content %}
+<div class="jumbotron">
+  <h1 class="display-4">Finished a new book?</h1>
+  <p class="lead">Simply input the ISBN number or book title in the field below to add the book to your library.</p>
+  <hr class="my-4">
+  <div id="searchForm">
+    <input type="text" name="ISBN" placeholder="ISBN or Title" id="ISBNField" class="form-control">
+    <button class="btn btn-primary btn-lg" id="ISBNSearchButton">Search For Book</button>
+  </div>
+</div>
+<div id="searchResults">
+  <div id="accordion">
+  </div>
+</div>
+{% endblock %}

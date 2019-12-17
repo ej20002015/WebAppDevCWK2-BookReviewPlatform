@@ -28,6 +28,11 @@
   color: red;
 }
 
+.success
+{
+  color: green;
+}
+
 nav
 {
   margin-bottom: 50px !important;

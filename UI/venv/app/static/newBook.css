@@ -1,0 +1,56 @@
+#searchForm
+{
+  width: 50%;
+  margin: auto auto;
+}
+
+#searchForm input
+{
+  margin-bottom: 20px;
+}
+
+.jumbotron
+{
+  color: #00203FFF;
+  font-size: 2rem;
+}
+
+.cardImageContainer
+{
+  text-align: center;
+  margin-bottom: 20px;
+  background-color: white;
+}
+
+.card img
+{
+  width: 321px;
+  height: 500px;
+  object-fit: cover;
+  margin: auto;
+}
+
+.card-title
+{
+  color: #00203FFF;
+}
+
+.card-header
+{
+  background-color: #ADEFD1FF;
+}
+
+.card-body
+{
+  background-color: #e9ecef;
+}
+
+.card
+{
+  margin-bottom: 40px;  
+}
+
+#feedback
+{
+  margin-top: 10px;
+}
