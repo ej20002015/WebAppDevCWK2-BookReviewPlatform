@@ -6,10 +6,36 @@ from flask_httpauth import HTTPBasicAuth
 from flask_restful import Resource, Api
 from passlib.hash import bcrypt
 from flask_cors import CORS
+from functools import wraps
+from datetime import datetime
 
 api = Api(app)
 CORS(app)
 auth = HTTPBasicAuth()
+
+
+#Log each of request
+def logRequest(method):
+  @wraps(method)
+  def wrapper(*args, **kwargs):
+    requestString = str(request)
+    if request.get_json():
+      requestString = requestString + " | JSON: " + str(request.get_json())
+    newLog = models.Log(id=uuid.uuid1().hex, logText=requestString, timestamp=datetime.now())
+    db.session.add(newLog)
+    db.session.commit()
+
+    return method(*args, **kwargs)
+
+  return wrapper
+
+def forAllMethods(decorator):
+  def decorate(cls):
+    for attr in cls.__dict__:
+      if callable(getattr(cls, attr)):
+          setattr(cls, attr, decorator(getattr(cls, attr)))
+    return cls
+  return decorate
 
 @auth.verify_password
 def verifyPassword(username, password):
@@ -43,6 +69,7 @@ def checkFilterAttributes(filterDict, *attributes):
       return False
   return True
 
+@forAllMethods(logRequest)
 class UserResource(Resource):
 
   @auth.login_required
@@ -75,6 +102,7 @@ class UserResource(Resource):
     else:
       return {"error": "JSON does not include the required data to change a user password"}, 400
 
+@forAllMethods(logRequest)
 class UsersResource(Resource):
 
   def post(self):
@@ -101,6 +129,7 @@ class UsersResource(Resource):
     else:
       return {"error": "JSON does not include the required data to make a new user"}, 400
 
+@forAllMethods(logRequest)
 class BookResource(Resource):
 
   @auth.login_required
@@ -111,6 +140,7 @@ class BookResource(Resource):
     else:
       return {"error": "No book has the specified ID"}, 404
 
+@forAllMethods(logRequest)
 class BooksResource(Resource):
 
   @auth.login_required
@@ -168,6 +198,7 @@ class BooksResource(Resource):
     else:
       return {"error": "JSON does not include the required data to create a book"}, 400    
 
+@forAllMethods(logRequest)
 class UserReadBookResource(Resource):
 
   @auth.login_required
@@ -196,6 +227,7 @@ class UserReadBookResource(Resource):
     else:
       return {"error": "No userReadBook has the specified ID"}, 404
 
+@forAllMethods(logRequest)
 class UserReadBooksResource(Resource):
 
   @auth.login_required
@@ -247,7 +279,7 @@ class UserReadBooksResource(Resource):
     else:
       return {"error": "JSON does not include the required data to create a UserReadBook resource"}, 400
 
-
+@forAllMethods(logRequest)
 class SessionsResource(Resource):
 
   def post(self):
@@ -269,6 +301,16 @@ class SessionsResource(Resource):
     else:
       return {"error": "JSON does not include the required data to authenticate a user"}, 400
 
+@forAllMethods(logRequest)
+class LogsResource(Resource):
+
+  def get(self):
+    logs = []
+    for log in models.Log.query.all():
+      logs.append(LogsResource.toJSON())
+    
+    return logs, 200
+
 
 api.add_resource(UserResource, "/Users/<string:userId>")
 api.add_resource(UsersResource, "/Users")
@@ -277,3 +319,4 @@ api.add_resource(BooksResource, "/Books")
 api.add_resource(UserReadBookResource, "/UserReadBooks/<string:userReadBookId>")
 api.add_resource(UserReadBooksResource, "/UserReadBooks")
 api.add_resource(SessionsResource, "/Sessions")
+api.add_resource(LogsResource, "/Logs")

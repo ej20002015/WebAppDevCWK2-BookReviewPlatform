@@ -8,6 +8,7 @@ class User(db.Model):
   #password will be a hashed and salted cypher text generated using the bcrypt algorithm
   password = db.Column(db.String(60), nullable=False)
 
+  #define the many-to-many relationship between users and books
   books = db.relationship("Book", secondary="user_read_book")
 
   def toJSON(self):
@@ -23,6 +24,7 @@ class Book(db.Model):
   description = db.Column(db.Text)
   coverImageURI = db.Column(db.Text)
 
+  #define the many-to-many relationship between users and books
   users = db.relationship("User", secondary="user_read_book")
 
   def toJSON(self):
@@ -39,4 +41,10 @@ class UserReadBook(db.Model):
   def toJSON(self):
     return {"id": self.id, "userId": self.userId, "bookId": self.bookId, "favourite": self.favourite, "thoughts": self.thoughts}
 
+class Log(db.Model):
+  id = db.Column(db.String(36), primary_key=True)
+  logText = db.Column(db.Text, nullable=False)
+  timestamp = db.Column(db.DateTime, nullable=False)
 
+  def toJSON(self):
+    return {"id": self.id, "logText:": self.logText, "timestamp": self.timestamp}

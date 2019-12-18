@@ -1,5 +1,5 @@
 from app import app, forms
-from flask import session, redirect, url_for, render_template, jsonify
+from flask import session, redirect, url_for, render_template, jsonify, flash
 import requests
 from requests.auth import HTTPBasicAuth
 
@@ -101,7 +101,8 @@ def changePassword():
     if response:
       #do alert
       session["user"] = {"id": session["user"]["id"], "username": session["user"]["username"], "password": newPassword}
-      return redirect(url_for("index"))
+      flash("Your password was successfully changed!")
+      return redirect(url_for("changePassword"))
     else:
       return render_template("changePassword.html", form=form, validationError=response.json()["error"])
 
