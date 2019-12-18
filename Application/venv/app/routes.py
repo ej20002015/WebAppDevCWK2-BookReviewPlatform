@@ -14,7 +14,7 @@ CORS(app)
 auth = HTTPBasicAuth()
 
 
-#Log each of request
+#Log each request
 def logRequest(method):
   @wraps(method)
   def wrapper(*args, **kwargs):

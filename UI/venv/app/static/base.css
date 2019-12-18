@@ -63,3 +63,11 @@ nav
   color: #00203FFF;
   background-color: #ADEFD1FF;
 }
+
+@media (max-width: 991px)
+{
+  nav
+  {
+    text-align:center;
+  }
+}

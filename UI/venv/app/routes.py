@@ -33,7 +33,7 @@ def index():
 
       booksListLength = len(booksList)
       numberOfDummyCards = 0
-      while booksListLength % 3 != 0:
+      while booksListLength % 2 != 0:
         numberOfDummyCards += 1
         booksListLength += 1
 
@@ -73,7 +73,7 @@ def favouriteBooks():
 
       booksListLength = len(favouriteBooksList)
       numberOfDummyCards = 0
-      while booksListLength % 3 != 0:
+      while booksListLength % 2 != 0:
         numberOfDummyCards += 1
         booksListLength += 1
 
