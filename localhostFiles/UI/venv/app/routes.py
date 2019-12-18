@@ -8,6 +8,14 @@ applicationLayerDomain = "http://localhost:5001/"
 def checkLoggedIn():
   return "user" in session
 
+@app.route("/logOut")
+def logOut():
+  if not checkLoggedIn():
+    return redirect(url_for("login"))
+
+  session.clear()
+  return redirect(url_for("login"))
+
 @app.route("/")
 def index():
   if not checkLoggedIn():
