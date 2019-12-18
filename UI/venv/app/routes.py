@@ -152,16 +152,3 @@ def newBook():
     return redirect(url_for("login")) 
 
   return render_template("newBook.html", endpoint=applicationLayerDomain, user=session["user"])
-
-@app.route("/test")
-def test():
-  if not checkLoggedIn():
-    return redirect(url_for("login"))
-
-  #data = {"userId": "74c15a761f9811ea99ff5800e3e11c5d", "bookId": "9d4c5e6c-1f9a-11ea-99ff-5800e3e11c5d"}
-  response = requests.get(applicationLayerDomain + "UserReadBooks/acfaa3a81fa611ea99ff5800e3e11c5d", auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
-  print(response)
-  if response:
-    return jsonify(response.json())
-  else:
-    return response.json()["error"]

@@ -84,7 +84,6 @@ class UserResource(Resource):
   @auth.login_required
   def put(self, userId):
     data = request.get_json()
-    print(data)
     if checkPostData(data, "password"):
       user = models.User.query.filter_by(id=userId).first()
       if user:
@@ -95,6 +94,8 @@ class UserResource(Resource):
 
         user.password = bcrypt.hash(data["password"])
         db.session.commit()
+
+        return user.toJSON(), 204
 
       else:
         return {"error": "No user has the specified ID"}, 404
@@ -108,7 +109,7 @@ class UsersResource(Resource):
   def post(self):
     data = request.get_json()
     #check json data is all there
-    if checkPostData(data, "username", "password"):
+    if checkEssentialPostData(data, "username", "password"):
 
       #check if username is being used
       if models.User.query.filter_by(username=data["username"]).first():
@@ -195,8 +196,7 @@ class BooksResource(Resource):
         db.session.commit()
         return newBook.toJSON(), 201
 
-    else:
-      return {"error": "JSON does not include the required data to create a book"}, 400    
+    return {"error": "JSON does not include the required data to create a book"}, 400    
 
 @forAllMethods(logRequest)
 class UserReadBookResource(Resource):
@@ -276,15 +276,14 @@ class UserReadBooksResource(Resource):
         db.session.commit()
         return newUserReadBook.toJSON(), 201
 
-    else:
-      return {"error": "JSON does not include the required data to create a UserReadBook resource"}, 400
+    return {"error": "JSON does not include the required data to create a UserReadBook resource"}, 400
 
 @forAllMethods(logRequest)
 class SessionsResource(Resource):
 
   def post(self):
     data = request.get_json()
-    if checkPostData(data, "username", "password"):
+    if checkEssentialPostData(data, "username", "password"):
 
       #check username exists
       potentialUser = models.User.query.filter_by(username=data["username"]).first()
