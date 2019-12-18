@@ -7,7 +7,7 @@ alias deactivate 'test $?_OLD_VIRTUAL_PATH != 0 && setenv PATH "$_OLD_VIRTUAL_PA
 # Unset irrelevant variables.
 deactivate nondestructive
 
-setenv VIRTUAL_ENV "/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/Application/testingVenv"
+setenv VIRTUAL_ENV "/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/localhostFiles/Application/testingVenv"
 
 set _OLD_VIRTUAL_PATH="$PATH"
 setenv PATH "$VIRTUAL_ENV/bin:$PATH"

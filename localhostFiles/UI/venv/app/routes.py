@@ -100,7 +100,7 @@ def changePassword():
     response = requests.put(applicationLayerDomain + "Users/" + session["user"]["id"], json={"password": newPassword}, auth=HTTPBasicAuth(session["user"]["username"], session["user"]["password"]))
     if response:
       #do alert
-      session["user"] = {"id": session["user"]["id"], "username": session["user"]["username"], "password": newPassword}
+      session["user"]["password"] = newPassword
       flash("Your password was successfully changed!")
       return redirect(url_for("changePassword"))
     else:

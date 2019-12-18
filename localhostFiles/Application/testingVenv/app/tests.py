@@ -199,6 +199,19 @@ class UserReadBookTest(unittest.TestCase):
     data = {"favourite": 1}
     response = requests.put(applicationLayerDomain + "UserReadBooks/" + testUserReadBooks[-1]["id"], json=data, auth=HTTPBasicAuth(testUsers[-1]["username"], testUsers[-1]["password"]))
     assert response.status_code == 204, "Server should have changed the favourite value of the UserReadBook SERVER RESPONSE=" + str(response)
+
+class LogsTest(unittest.TestCase):
+  @classmethod
+  def setUpClass(cls):
+    #create a least one log message
+    if not testUsers:
+      testUsers.append({"username": uuid.uuid1().hex, "password": uuid.uuid1().hex})
+      response = requests.post(applicationLayerDomain + "Users", json={"username": testUsers[-1]["username"], "password": testUsers[-1]["password"]})
+      testUsers[-1]["id"] = response.json()["id"]
+
+  def testGetAllLogs(self):
+    response = requests.get(applicationLayerDomain + "Logs", auth=HTTPBasicAuth(testUsers[-1]["username"], testUsers[-1]["password"]))
+    assert response, "get request should have returned several logs SERVER RESPONSE=" + str(response)
   
 if __name__ == '__main__':
   unittest.main()

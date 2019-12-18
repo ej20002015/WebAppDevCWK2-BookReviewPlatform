@@ -40,7 +40,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/Application/testingVenv"
+VIRTUAL_ENV="/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/localhostFiles/Application/testingVenv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

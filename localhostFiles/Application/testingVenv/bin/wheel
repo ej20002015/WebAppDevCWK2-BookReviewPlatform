@@ -1,5 +1,5 @@
 #!/bin/sh
-'''exec' /home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/Application/testingVenv/bin/python3 "$0" "$@"
+'''exec' /home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/localhostFiles/Application/testingVenv/bin/python3 "$0" "$@"
 ' '''
 # -*- coding: utf-8 -*-
 import re

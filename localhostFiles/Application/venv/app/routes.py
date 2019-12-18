@@ -306,7 +306,7 @@ class LogsResource(Resource):
   def get(self):
     logs = []
     for log in models.Log.query.all():
-      logs.append(LogsResource.toJSON())
+      logs.append(log.toJSON())
     
     return logs, 200
 

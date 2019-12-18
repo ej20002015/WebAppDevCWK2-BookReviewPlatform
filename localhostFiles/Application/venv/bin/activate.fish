@@ -36,7 +36,7 @@ end
 # Unset irrelevant variables.
 deactivate nondestructive
 
-set -gx VIRTUAL_ENV "/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/Application/venv"
+set -gx VIRTUAL_ENV "/home/evan/Documents/Modules/year2/WebApplicationDevelopment/CW2/web-application-development-cw2/localhostFiles/Application/venv"
 
 set -gx _OLD_VIRTUAL_PATH $PATH
 set -gx PATH "$VIRTUAL_ENV/bin" $PATH

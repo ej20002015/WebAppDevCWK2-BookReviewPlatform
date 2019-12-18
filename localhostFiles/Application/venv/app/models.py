@@ -47,4 +47,4 @@ class Log(db.Model):
   timestamp = db.Column(db.DateTime, nullable=False)
 
   def toJSON(self):
-    return {"id": self.id, "logText:": self.logText, "timestamp": self.timestamp}
+    return {"id": self.id, "logText:": self.logText, "timestamp": str(self.timestamp)}
